@@ -1,0 +1,23 @@
+{
+  "name": "trace-portfolio-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint src tests",
+    "format": "prettier --write src tests index.html"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
+  }
+}

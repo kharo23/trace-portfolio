@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Davide Mibelli · Computer engineering student and app developer</title>
+    <meta
+      name="description"
+      content="Computer engineering student building mobile apps with Flutter and Expo. This page traces your own request through AWS, live."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l12 7v14l-12 7-12-7V9z' fill='%23fbbf24'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#about">Skip to content</a>
+    <header class="hero">
+      <p class="eyebrow">Davide Mibelli</p>
+      <h1>I ship apps people use.<br />Don't trust my CV, trace it.</h1>
+      <p class="lead">Computer engineering student and independent mobile developer at Kharonte Studio.</p>
+      <div class="beacon-row">
+        <button id="beacon" class="beacon" type="button" aria-describedby="beacon-hint">
+          <span class="pulse" aria-hidden="true"></span>
+          Trace my request
+        </button>
+        <p id="beacon-hint" class="hint">
+          Tap: I'll trace <em>your</em> request through AWS, live.<br />
+          <small>One click. Only a counter is stored.</small>
+        </p>
+      </div>
+      <section id="trace" class="trace" aria-live="polite" aria-label="Live request trace" hidden>
+        <ol id="hops" class="hops"></ol>
+        <p id="trace-note" class="note"></p>
+        <div class="actions">
+          <button id="receipt" type="button" class="secondary" hidden>Download receipt</button>
+          <button id="close-trace" type="button" class="secondary">Close</button>
+        </div>
+      </section>
+      <nav class="nav" aria-label="Sections">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#how">How this works</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="about">
+        <h2>About me</h2>
+        <p>
+          I study computer engineering and build mobile apps under my own studio,
+          <a href="https://kharonte.dev" rel="noopener">Kharonte Studio</a>. I like projects where I have to
+          check my own numbers before I claim them: I design, ship, measure and fix.
+        </p>
+        <p>
+          Four of my apps are on the App Store and Google Play. Three more are in the pipeline. Recently I
+          entered the AWS Builder Center Weekend Challenge "Map it" with a map of access to essential services
+          in Italy.
+        </p>
+      </section>
+
+      <section id="skills">
+        <h2>Tech superpowers</h2>
+        <ul class="chips" id="skill-list">
+          <li>Flutter and Dart</li>
+          <li>React Native, Expo and TypeScript</li>
+          <li>SQLite and Drift</li>
+          <li>Firebase</li>
+          <li>RevenueCat and in-app purchases</li>
+          <li>Sentry crash reporting</li>
+          <li>Python and DuckDB</li>
+          <li>AWS: Lambda, DynamoDB, S3, CloudFront</li>
+          <li>AWS: Amazon Location Service, Athena, Iceberg</li>
+          <li>CI with GitHub Actions</li>
+        </ul>
+      </section>
+
+      <section id="projects">
+        <h2>Projects</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Isolated Italy <span class="tag">AWS contest</span></h3>
+            <p>
+              Interactive map of how far Italians live from a pharmacy, doctor and school, with road routing
+              from Amazon Location Service and a planner for new sites.
+            </p>
+            <p class="stack">Python, DuckDB, Amazon Location, Lambda, DynamoDB, Athena on Iceberg</p>
+            <a href="https://github.com/kharo23/isolated-italy" rel="noopener">Source code</a>
+          </article>
+          <article class="card">
+            <h3>Preventivi Facili <span class="tag">published</span></h3>
+            <p>Quote and invoice app for tradespeople.</p>
+            <p class="stack">Expo, React Native, TypeScript, RevenueCat, Sentry</p>
+          </article>
+          <article class="card">
+            <h3>Foodlio <span class="tag">published</span></h3>
+            <p>Food cost calculator for kitchens.</p>
+            <p class="stack">Flutter, Riverpod, Drift, Firebase, RevenueCat</p>
+          </article>
+          <article class="card">
+            <h3>Padel Match Manager <span class="tag">published</span></h3>
+            <p>Organiser for padel tournaments and matches.</p>
+            <p class="stack">Flutter, Riverpod, SQLite, Firebase</p>
+          </article>
+          <article class="card">
+            <h3>Aegis <span class="tag">published</span></h3>
+            <p>Mindfulness app.</p>
+            <p class="stack">Flutter, Riverpod, RevenueCat, Firebase</p>
+          </article>
+        </div>
+        <p class="more">More at <a href="https://kharonte.dev" rel="noopener">kharonte.dev</a>.</p>
+      </section>
+
+      <section id="how">
+        <h2>How the trace works</h2>
+        <p>
+          The button calls <code>/api/trace</code> on the same domain. CloudFront forwards it to a Lambda
+          function in eu-central-1 that adds one to a DynamoDB counter and returns what it knows. The edge
+          location comes from the <code>x-amz-cf-pop</code> response header, the round trip is timed by your
+          browser, and the handler time is measured inside the function. If the live call fails, the page says
+          so instead of showing a made-up trace.
+        </p>
+        <p>
+          <a href="https://github.com/kharo23/trace-portfolio" rel="noopener">Source code and deploy notes</a>
+        </p>
+      </section>
+    </main>
+    <footer><p>Davide Mibelli · built on AWS Amplify Hosting, CloudFront, Lambda and DynamoDB.</p></footer>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

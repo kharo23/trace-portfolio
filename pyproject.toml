@@ -1,0 +1,28 @@
+[project]
+name = "trace-portfolio"
+version = "1.0.0"
+description = "Portfolio site whose creative feature traces the visitor's own request through AWS."
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = ["boto3>=1.35"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5", "cfn-lint>=1.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["api"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Trace portfolio. Amplify Hosting site and a Lambda trace API behind one CloudFront distribution, with a DynamoDB visit counter.
+
+Parameters:
+  BranchName:
+    Type: String
+    Default: main
+    Description: Amplify branch that receives the manual deployment.
+
+Resources:
+  CounterTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [{ AttributeName: id, AttributeType: S }]
+      KeySchema: [{ AttributeName: id, KeyType: HASH }]
+
+  TraceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: [{ Effect: Allow, Principal: { Service: lambda.amazonaws.com }, Action: "sts:AssumeRole" }]
+      ManagedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+      Policies:
+        - PolicyName: counter
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - { Effect: Allow, Action: "dynamodb:UpdateItem", Resource: !GetAtt CounterTable.Arn }
+
+  TraceFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.13
+      Handler: tracer.handler
+      Role: !GetAtt TraceRole.Arn
+      Timeout: 10
+      MemorySize: 128
+      Environment: { Variables: { COUNTER_TABLE: !Ref CounterTable } }
+      Code: { ZipFile: "def handler(event, context): return {'statusCode': 503}" } # replaced by infra/deploy.sh
+
+  TraceUrl:
+    Type: AWS::Lambda::Url
+    Properties: { TargetFunctionArn: !Ref TraceFunction, AuthType: AWS_IAM }
+
+  TraceInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TraceFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: cloudfront.amazonaws.com
+      FunctionUrlAuthType: AWS_IAM
+      SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
+
+  LambdaOac:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-lambda-oac"
+        OriginAccessControlOriginType: lambda
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  ViewerCountryPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: !Sub "${AWS::StackName}-viewer-country"
+        HeadersConfig: { HeaderBehavior: whitelist, Headers: ["CloudFront-Viewer-Country"] }
+        CookiesConfig: { CookieBehavior: none }
+        QueryStringsConfig: { QueryStringBehavior: none }
+
+  App:
+    Type: AWS::Amplify::App
+    Properties:
+      Name: !Sub "${AWS::StackName}-site"
+      Description: Static portfolio, manual deployments.
+
+  Branch:
+    Type: AWS::Amplify::Branch
+    Properties:
+      AppId: !GetAtt App.AppId
+      BranchName: !Ref BranchName
+      Stage: PRODUCTION
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: site
+            DomainName: !Sub "${BranchName}.${App.DefaultDomain}"
+            CustomOriginConfig: { OriginProtocolPolicy: https-only }
+          - Id: api
+            DomainName: !Select [2, !Split ["/", !GetAtt TraceUrl.FunctionUrl]]
+            OriginAccessControlId: !GetAtt LambdaOac.Id
+            CustomOriginConfig: { OriginProtocolPolicy: https-only }
+        DefaultCacheBehavior:
+          TargetOriginId: site
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: api
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD]
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # Managed-CachingDisabled: every trace is a fresh request
+            OriginRequestPolicyId: !Ref ViewerCountryPolicy
+
+Outputs:
+  SiteUrl: { Value: !Sub "https://${Distribution.DomainName}" }
+  DistributionId: { Value: !Ref Distribution }
+  AmplifyAppId: { Value: !GetAtt App.AppId }
+  FunctionName: { Value: !Ref TraceFunction }
