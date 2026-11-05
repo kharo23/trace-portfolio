@@ -22,6 +22,12 @@ flowchart LR
 - The Lambda function URL uses AWS_IAM auth, reachable only through CloudFront (origin access control).
 - DynamoDB stores one item: an anonymous counter. The visitor's IP address is not read or stored.
 
+## Checks you can repeat
+
+- Run `curl -si https://d1i0z8z1jgpheg.cloudfront.net/api/trace | head -n 20` and read `x-amz-cf-pop` and the JSON yourself.
+- Lighthouse on the live site, 2026-11-05: performance, accessibility, best practices and SEO all 100, on the desktop and the mobile preset.
+- Cold start, 10 forced cold starts (a configuration change before each call): 255 to 297 ms in the handler, median 272 ms. The first version, with the DynamoDB client created inside the handler, took 2.2 s.
+
 ## What is measured and what is not
 
 | Field | Source |
@@ -31,7 +37,9 @@ flowchart LR
 | Handler time | timed inside the Lambda function (excludes initialisation and network) |
 | Cold or warm | module-level flag in the function |
 | Visit number | atomic DynamoDB `ADD` |
+| City next to the edge code | airport code looked up in a static table; the raw code is shown if it is not in the table |
 | Hop order in the diagram | illustrative |
+| Text under each hop | written by me, not measured |
 
 If the live call fails, the page says so and shows nothing, rather than a made-up trace.
 

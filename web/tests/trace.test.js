@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { buildTrace, hops, parsePop, receiptLines, validateTrace } from "../src/trace.js";
+import {
+  buildTrace,
+  hops,
+  parsePop,
+  popCity,
+  receiptLines,
+  validateTrace,
+  verifyCommand,
+} from "../src/trace.js";
 
 const body = {
   requestId: "2f0c8a1e-0000-4000-8000-123456789abc",
@@ -66,5 +74,37 @@ describe("hops and receipt", () => {
     expect(text).toContain("visitor      #12");
     expect(text).toContain("2026-11-05 10:00 UTC");
     expect(text).not.toContain(body.requestId);
+  });
+});
+
+describe("edge city", () => {
+  it("maps known airport codes to a city and falls back to the raw code", () => {
+    expect(popCity("FCO")).toBe("Rome");
+    expect(popCity("MXP")).toBe("Milan");
+    expect(popCity("ZZZ")).toBeNull();
+  });
+  it("shows the city next to the edge location only when it is known", () => {
+    const known = buildTrace(body, { pop: "FCO50-P1", roundTripMs: 60 });
+    expect(hops(known)[1].detail).toBe("FCO50-P1 (Rome)");
+    const unknown = buildTrace(body, { pop: "ZZZ1-P1", roundTripMs: 60 });
+    expect(hops(unknown)[1].detail).toBe("location ZZZ1-P1");
+  });
+});
+
+describe("explanations and verification", () => {
+  const t = buildTrace(body, { pop: "FRA56-P2", roundTripMs: 71 });
+  it("gives every hop a reason that is written text, not a measurement", () => {
+    for (const h of hops(t)) expect(h.why.length).toBeGreaterThan(20);
+  });
+  it("keeps the region on one line", () => {
+    expect(hops(t)[2].title).not.toContain("-");
+  });
+  it("builds a command the visitor can run against the same origin", () => {
+    expect(verifyCommand("https://example.test")).toBe(
+      "curl -si https://example.test/api/trace | head -n 20",
+    );
+  });
+  it("marks separators in the receipt so the renderer can draw them", () => {
+    expect(receiptLines(t).filter((l) => /^-+$/.test(l))).toHaveLength(2);
   });
 });

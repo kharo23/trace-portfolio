@@ -1,6 +1,6 @@
 import "./style.css";
 import { renderReceipt } from "./receipt.js";
-import { buildTrace, hops, receiptLines } from "./trace.js";
+import { buildTrace, hops, receiptLines, verifyCommand } from "./trace.js";
 
 const $ = (id) => document.getElementById(id);
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -28,13 +28,14 @@ function showError(message) {
   $("trace-note").textContent =
     `Live trace unavailable (${message}). Nothing is shown rather than a made-up trace.`;
   $("receipt").hidden = true;
+  $("verify").hidden = true;
 }
 
 async function reveal(trace) {
   $("hops").innerHTML = hops(trace)
     .map(
       (h) =>
-        `<li class="hop" data-id="${esc(h.id)}"><b>${esc(h.title)}</b><span>${esc(h.detail)}</span></li>`,
+        `<li class="hop" data-id="${esc(h.id)}"><b>${esc(h.title)}</b><span>${esc(h.detail)}</span><em>${esc(h.why)}</em></li>`,
     )
     .join("");
   for (const node of document.querySelectorAll(".hop")) {
@@ -46,16 +47,25 @@ async function reveal(trace) {
     `Visitor #${trace.visit}. Round trip ${trace.roundTripMs} ms measured by your browser; ` +
     `${trace.handlerMs} ms measured inside the function. Hop order is illustrative, the values are real.`;
   $("receipt").hidden = false;
+  $("verify").hidden = false;
+}
+
+function skeleton() {
+  const titles = ["You", "CloudFront edge", "Lambda", "DynamoDB"];
+  $("hops").innerHTML = titles
+    .map((t) => `<li class="hop pending"><b>${esc(t)}</b><span>waiting for AWS...</span></li>`)
+    .join("");
 }
 
 async function onTrace() {
   const button = $("beacon");
   button.disabled = true;
   $("trace").hidden = false;
-  $("hops").innerHTML = "";
+  skeleton();
   $("trace-note").className = "note";
   $("trace-note").textContent = "Tracing...";
   $("receipt").hidden = true;
+  $("verify").hidden = true;
   try {
     lastTrace = await fetchTrace();
     await reveal(lastTrace);
@@ -77,6 +87,15 @@ async function onReceipt() {
   URL.revokeObjectURL(link.href);
 }
 
+$("verify-cmd").textContent = verifyCommand(window.location.origin);
+$("copy-cmd").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText($("verify-cmd").textContent);
+    $("copy-cmd").textContent = "Copied";
+  } catch {
+    $("copy-cmd").textContent = "Select and copy";
+  }
+});
 $("beacon").addEventListener("click", onTrace);
 $("receipt").addEventListener("click", onReceipt);
 $("close-trace").addEventListener("click", () => {

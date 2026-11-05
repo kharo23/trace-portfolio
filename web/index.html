@@ -12,6 +12,14 @@
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l12 7v14l-12 7-12-7V9z' fill='%23fbbf24'/%3E%3C/svg%3E"
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Davide Mibelli: don't trust my CV, trace it" />
+    <meta
+      property="og:description"
+      content="Computer engineering student and app developer. One tap traces your own request through AWS, live."
+    />
+    <meta property="og:image" content="https://d1i0z8z1jgpheg.cloudfront.net/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <a class="skip" href="#about">Skip to content</a>
@@ -32,6 +40,11 @@
       <section id="trace" class="trace" aria-live="polite" aria-label="Live request trace" hidden>
         <ol id="hops" class="hops"></ol>
         <p id="trace-note" class="note"></p>
+        <div id="verify" class="verify" hidden>
+          <p>Don't take my word for it. Run this and read the headers yourself:</p>
+          <pre><code id="verify-cmd"></code></pre>
+          <button id="copy-cmd" type="button" class="secondary">Copy command</button>
+        </div>
         <div class="actions">
           <button id="receipt" type="button" class="secondary" hidden>Download receipt</button>
           <button id="close-trace" type="button" class="secondary">Close</button>
@@ -42,6 +55,7 @@
         <a href="#skills">Skills</a>
         <a href="#projects">Projects</a>
         <a href="#how">How this works</a>
+        <a href="#contact">Contact</a>
       </nav>
     </header>
 
@@ -49,64 +63,119 @@
       <section id="about">
         <h2>About me</h2>
         <p>
-          I study computer engineering and build mobile apps under my own studio,
-          <a href="https://kharonte.dev" rel="noopener">Kharonte Studio</a>. I like projects where I have to
-          check my own numbers before I claim them: I design, ship, measure and fix.
+          I study computer engineering and run an independent studio,
+          <a href="https://kharonte.dev" rel="noopener">Kharonte Studio</a>, where I design, build and release
+          mobile apps on my own: four of them are on the App Store, three also on Google Play.
         </p>
         <p>
-          Four of my apps are on the App Store and Google Play. Three more are in the pipeline. Recently I
-          entered the AWS Builder Center Weekend Challenge "Map it" with a map of access to essential services
-          in Italy.
+          Shipping alone taught me that the boring parts decide whether an app lives. Apple rejects a first
+          in-app purchase unless it is submitted together with the version, so I wrote scripts that prepare
+          and check each store release. I like work where I have to check my own numbers before I claim them.
+          In my earlier AWS entry, a map of access to essential services in Italy, I caught and corrected my
+          own wrong headline figures before publishing.
+        </p>
+        <p>
+          This page follows the same rule. The button above does not decorate the page: it proves that it runs
+          on AWS, and gives you the means to check.
         </p>
       </section>
 
       <section id="skills">
-        <h2>Tech superpowers</h2>
-        <ul class="chips" id="skill-list">
-          <li>Flutter and Dart</li>
-          <li>React Native, Expo and TypeScript</li>
-          <li>SQLite and Drift</li>
-          <li>Firebase</li>
-          <li>RevenueCat and in-app purchases</li>
-          <li>Sentry crash reporting</li>
-          <li>Python and DuckDB</li>
-          <li>AWS: Lambda, DynamoDB, S3, CloudFront</li>
-          <li>AWS: Amazon Location Service, Athena, Iceberg</li>
-          <li>CI with GitHub Actions</li>
-        </ul>
+        <h2>Skills</h2>
+        <div class="skills">
+          <div>
+            <h3>Mobile</h3>
+            <ul class="chips">
+              <li>Flutter and Dart</li>
+              <li>React Native, Expo, TypeScript</li>
+              <li>SQLite and Drift</li>
+              <li>Firebase</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Shipping</h3>
+            <ul class="chips">
+              <li>In-app purchases with RevenueCat</li>
+              <li>Crash reporting with Sentry</li>
+              <li>App Store and Google Play release scripts</li>
+              <li>CI with GitHub Actions</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Cloud and data</h3>
+            <ul class="chips">
+              <li>AWS Lambda, DynamoDB, CloudFront, Amplify</li>
+              <li>CloudFormation</li>
+              <li>Amazon Location Service, Athena, Iceberg</li>
+              <li>Python and DuckDB</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section id="projects">
         <h2>Projects</h2>
         <div class="cards">
           <article class="card">
-            <h3>Isolated Italy <span class="tag">AWS contest</span></h3>
+            <h3>Preventivi Facili <span class="tag">App Store since Jun 2026</span></h3>
+            <p>
+              Quotes and invoices as PDF for tradespeople. Free for the first three quotes, then a one-time
+              purchase.
+            </p>
+            <p class="stack">Expo, React Native, TypeScript, RevenueCat, Sentry</p>
+            <p class="links">
+              <a href="https://apps.apple.com/it/app/id6775595665" rel="noopener">App Store</a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.kharonte.preventivifacili"
+                rel="noopener"
+                >Google Play</a
+              >
+            </p>
+          </article>
+          <article class="card">
+            <h3>Padel Match Manager <span class="tag">App Store since Jun 2026</span></h3>
+            <p>Organiser for Americano and Mexicano padel tournaments.</p>
+            <p class="stack">Flutter, Riverpod, SQLite, Firebase</p>
+            <p class="links">
+              <a href="https://apps.apple.com/it/app/id6775152321" rel="noopener">App Store</a>
+              <a
+                href="https://play.google.com/store/apps/details?id=it.kharonte.padel_tournament_organizer"
+                rel="noopener"
+                >Google Play</a
+              >
+            </p>
+          </article>
+          <article class="card">
+            <h3>Foodlio <span class="tag">App Store since Jul 2026</span></h3>
+            <p>Food cost calculator for kitchens and restaurants.</p>
+            <p class="stack">Flutter, Riverpod, Drift, Firebase, RevenueCat</p>
+            <p class="links">
+              <a href="https://apps.apple.com/it/app/id6777711571" rel="noopener">App Store</a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.kharonte.food_cost_pro"
+                rel="noopener"
+                >Google Play</a
+              >
+            </p>
+          </article>
+          <article class="card">
+            <h3>Aegis <span class="tag">App Store since Jul 2026</span></h3>
+            <p>Breathing and focus exercises for stress and anxiety. Not a medical device.</p>
+            <p class="stack">Flutter, Riverpod, RevenueCat, Firebase</p>
+            <p class="links">
+              <a href="https://apps.apple.com/it/app/id6791089198" rel="noopener">App Store</a>
+            </p>
+          </article>
+          <article class="card">
+            <h3>Isolated Italy <span class="tag">AWS contest entry</span></h3>
             <p>
               Interactive map of how far Italians live from a pharmacy, doctor and school, with road routing
               from Amazon Location Service and a planner for new sites.
             </p>
             <p class="stack">Python, DuckDB, Amazon Location, Lambda, DynamoDB, Athena on Iceberg</p>
-            <a href="https://github.com/kharo23/isolated-italy" rel="noopener">Source code</a>
-          </article>
-          <article class="card">
-            <h3>Preventivi Facili <span class="tag">published</span></h3>
-            <p>Quote and invoice app for tradespeople.</p>
-            <p class="stack">Expo, React Native, TypeScript, RevenueCat, Sentry</p>
-          </article>
-          <article class="card">
-            <h3>Foodlio <span class="tag">published</span></h3>
-            <p>Food cost calculator for kitchens.</p>
-            <p class="stack">Flutter, Riverpod, Drift, Firebase, RevenueCat</p>
-          </article>
-          <article class="card">
-            <h3>Padel Match Manager <span class="tag">published</span></h3>
-            <p>Organiser for padel tournaments and matches.</p>
-            <p class="stack">Flutter, Riverpod, SQLite, Firebase</p>
-          </article>
-          <article class="card">
-            <h3>Aegis <span class="tag">published</span></h3>
-            <p>Mindfulness app.</p>
-            <p class="stack">Flutter, Riverpod, RevenueCat, Firebase</p>
+            <p class="links">
+              <a href="https://github.com/kharo23/isolated-italy" rel="noopener">Source code</a>
+            </p>
           </article>
         </div>
         <p class="more">More at <a href="https://kharonte.dev" rel="noopener">kharonte.dev</a>.</p>
@@ -125,8 +194,16 @@
           <a href="https://github.com/kharo23/trace-portfolio" rel="noopener">Source code and deploy notes</a>
         </p>
       </section>
+      <section id="contact">
+        <h2>Contact</h2>
+        <p>
+          <a href="mailto:kharonte.appdev@gmail.com">kharonte.appdev@gmail.com</a> ·
+          <a href="https://github.com/kharo23" rel="noopener">GitHub</a> ·
+          <a href="https://kharonte.dev" rel="noopener">Kharonte Studio</a>
+        </p>
+      </section>
     </main>
-    <footer><p>Davide Mibelli · built on AWS Amplify Hosting, CloudFront, Lambda and DynamoDB.</p></footer>
+    <footer><p>Davide Mibelli · hosted on AWS: Amplify Hosting, CloudFront, Lambda and DynamoDB.</p></footer>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -292,6 +292,9 @@ footer {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .hop.pending {
+    animation: none;
+  }
   html {
     scroll-behavior: auto;
   }
@@ -302,4 +305,80 @@ footer {
     transition: none;
     transform: none;
   }
+}
+
+.hop em {
+  display: block;
+  margin-top: 8px;
+  color: #7d89a8;
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1.4;
+}
+.hop.pending {
+  opacity: 0.5;
+  transform: none;
+  animation: wait 1.2s ease-in-out infinite;
+}
+@keyframes wait {
+  50% {
+    opacity: 0.25;
+  }
+}
+.hop b,
+.hop span {
+  white-space: normal;
+}
+.hop b {
+  overflow-wrap: anywhere;
+}
+.verify {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.verify p {
+  margin: 0 0 8px;
+}
+.verify pre {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  background: #0f1630;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow-x: auto;
+}
+.verify code {
+  background: none;
+  padding: 0;
+  color: var(--fg);
+}
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+.skills h3 {
+  color: var(--muted);
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.links {
+  display: flex;
+  gap: 16px;
+  margin: 12px 0 0;
+}
+.card .tag {
+  display: inline-block;
+  margin: 6px 0 0;
+  white-space: nowrap;
+}
+.card h3 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
