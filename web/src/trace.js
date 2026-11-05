@@ -137,8 +137,8 @@ export function hops(trace) {
     {
       id: "db",
       title: "DynamoDB",
-      detail: `visit counter +1, now ${trace.visit}`,
-      why: "An atomic ADD, so two visitors at once never overwrite each other.",
+      detail: `request counter +1, now ${trace.visit}`,
+      why: "An atomic ADD, so two requests at once never overwrite each other.",
     },
   ];
 }
@@ -152,7 +152,7 @@ export function receiptLines(trace, now = new Date()) {
     "issued by Davide Mibelli",
     stamp,
     "--------------------------------",
-    `visitor      #${trace.visit}`,
+    `request      #${trace.visit}`,
     `edge         ${trace.pop ? trace.pop.raw : "n/a"}${city ? ` (${city})` : ""}`,
     `lambda       ${trace.region} (${trace.coldStart ? "cold" : "warm"})`,
     `handler      ${trace.handlerMs} ms`,

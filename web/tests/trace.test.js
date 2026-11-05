@@ -71,7 +71,7 @@ describe("hops and receipt", () => {
   });
   it("never prints the full request id", () => {
     const text = receiptLines(t, new Date("2026-11-05T10:00:00Z")).join("\n");
-    expect(text).toContain("visitor      #12");
+    expect(text).toContain("request      #12");
     expect(text).toContain("2026-11-05 10:00 UTC");
     expect(text).not.toContain(body.requestId);
   });

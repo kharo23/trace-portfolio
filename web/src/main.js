@@ -44,7 +44,7 @@ async function reveal(trace) {
   }
   $("trace-note").className = "note";
   $("trace-note").textContent =
-    `Visitor #${trace.visit}. Round trip ${trace.roundTripMs} ms measured by your browser; ` +
+    `Request #${trace.visit}. Round trip ${trace.roundTripMs} ms measured by your browser; ` +
     `${trace.handlerMs} ms measured inside the function. Hop order is illustrative, the values are real.`;
   $("receipt").hidden = false;
   $("verify").hidden = false;

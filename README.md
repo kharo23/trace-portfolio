@@ -1,5 +1,9 @@
 # Trace portfolio
 
+**Live:** https://d1i0z8z1jgpheg.cloudfront.net
+
+![The portfolio after one tap](docs/screenshots/trace-open.png)
+
 Personal portfolio of Davide Mibelli, built for the AWS Student Builder Challenge. Its creative feature is a trace of
 the visitor's own request through AWS: one tap, and the page shows the real edge location, the Lambda region, whether
 the function was cold or warm, the time measured in the handler and in the browser, and a visit counter. The trace can
@@ -20,7 +24,13 @@ flowchart LR
   `x-amz-cf-pop` response header that names the edge location.
 - `/api/*` uses the managed CachingDisabled policy: every trace is a fresh request.
 - The Lambda function URL uses AWS_IAM auth, reachable only through CloudFront (origin access control).
-- DynamoDB stores one item: an anonymous counter. The visitor's IP address is not read or stored.
+- DynamoDB stores one item: an anonymous request counter. Every call to `/api/trace` adds one, including calls made with curl.
+- The function never reads the visitor's IP address. The country shown on the page comes from the `CloudFront-Viewer-Country` header, is returned to the visitor and is not stored. AWS service logs keep request IDs and timings.
+
+## Limits
+
+- The public endpoint has no rate limit; the cost protection is a budget alert (1 USD, created in the console, not part of the stack), which warns but does not stop spending. Usage is expected to stay inside the free tier (an estimate, not measured).
+- The text under each hop is written by me and is not measured. Hop order is illustrative.
 
 ## Checks you can repeat
 
