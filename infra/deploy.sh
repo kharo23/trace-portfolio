@@ -19,7 +19,7 @@ if [ "$status" = "ROLLBACK_COMPLETE" ]; then
 fi
 
 aws cloudformation deploy --stack-name "$STACK" --template-file infra/template.yaml \
-  --parameter-overrides BranchName="$BRANCH" --no-fail-on-empty-changeset
+  --capabilities CAPABILITY_IAM --parameter-overrides BranchName="$BRANCH" --no-fail-on-empty-changeset
 
 output() {
   aws cloudformation describe-stacks --stack-name "$STACK" \

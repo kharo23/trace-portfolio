@@ -11,22 +11,18 @@ from __future__ import annotations
 import json
 import os
 import time
-from functools import lru_cache
 from typing import Any
 
 import boto3
 
 _COLD = True
-
-
-@lru_cache(maxsize=1)
-def _table_client():
-    return boto3.client("dynamodb")
+# Created once per execution environment, during initialisation, so it is not counted in the handler time.
+_DYNAMODB = boto3.client("dynamodb")
 
 
 def bump_counter() -> int:
     """Atomically add one visit and return the new total."""
-    result = _table_client().update_item(
+    result = _DYNAMODB.update_item(
         TableName=os.environ["COUNTER_TABLE"],
         Key={"id": {"S": "visits"}},
         UpdateExpression="ADD #n :one",

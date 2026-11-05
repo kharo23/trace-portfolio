@@ -53,6 +53,15 @@ Resources:
       FunctionUrlAuthType: AWS_IAM
       SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
 
+  TraceInvokeFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TraceFunction
+      Action: lambda:InvokeFunction
+      Principal: cloudfront.amazonaws.com
+      SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
+      InvokedViaFunctionUrl: true
+
   LambdaOac:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
