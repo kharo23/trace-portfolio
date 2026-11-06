@@ -590,3 +590,7 @@ footer {
     transition: none;
   }
 }
+
+.nw {
+  white-space: nowrap;
+}
