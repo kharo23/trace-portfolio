@@ -448,7 +448,7 @@ main > section.split {
   width: min(44%, 188px);
   height: auto;
   border-radius: 22px;
-  border: 1px solid rgba(0, 0, 0, 0.18);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 .shots img:nth-child(2) {
   margin-top: 36px;
