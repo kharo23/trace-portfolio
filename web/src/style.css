@@ -441,6 +441,7 @@ main > section.split {
 }
 .shots {
   display: flex;
+  align-items: flex-start;
   justify-content: center;
   gap: 16px;
 }
