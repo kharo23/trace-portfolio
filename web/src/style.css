@@ -592,6 +592,6 @@ footer {
   }
 }
 
-.nw {
-  white-space: nowrap;
+.line {
+  display: block;
 }
